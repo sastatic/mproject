@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "347544461444",
+    "firebase_url": "https://mproject833.firebaseio.com",
+    "project_id": "mproject833",
+    "storage_bucket": "mproject833.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:347544461444:android:b2750ce244988caa",
+        "android_client_info": {
+          "package_name": "randevu.mproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "347544461444-fl5n5j4ebg5f50nha1pbm59sa21qneel.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "randevu.mproject",
+            "certificate_hash": "73c836492a61d3a440e7825dde30b04a081e8885"
+          }
+        },
+        {
+          "client_id": "347544461444-vrq07kv4omgbo4e1jbvjn1jgu4e6hl17.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpGnmnP7H_8NTcFDhIchmcYBFWA7kAFjo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "347544461444-vrq07kv4omgbo4e1jbvjn1jgu4e6hl17.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
