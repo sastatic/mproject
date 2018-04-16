@@ -44,7 +44,10 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".Profile"></activity>
+        <activity android:name=".Profile" />
+        <activity android:name=".signup_form" />
+        <activity android:name=".Deliverer"></activity>
+
     </application>
 
 </manifest>

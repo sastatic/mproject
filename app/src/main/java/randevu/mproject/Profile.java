@@ -18,6 +18,8 @@ public class Profile extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.activity_profile);
 
         findViewById(R.id.signOut).setOnClickListener(this);
+        findViewById(R.id.userBtn).setOnClickListener(this);
+        findViewById(R.id.delivererBtn).setOnClickListener(this);
 
         mAuth = FirebaseAuth.getInstance();
     }
@@ -26,7 +28,8 @@ public class Profile extends BaseActivity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
+        if (currentUser == null)
+            startActivity(new Intent(Profile.this, start.class));
     }
 
     @Override
@@ -34,18 +37,24 @@ public class Profile extends BaseActivity implements View.OnClickListener {
         int i = v.getId();
         if (i == R.id.signOut) {
             startSignOut();
+        } else if (i == R.id.userBtn) {
+            startUser();
+        } else if (i == R.id.delivererBtn) {
+            startDeliverer();
         }
+    }
+
+    private void startDeliverer() {
+        startActivity(new Intent(Profile.this, Deliverer.class));
+    }
+
+    private void startUser() {
+        Toast.makeText(Profile.this, "Button to be linked", Toast.LENGTH_LONG).show();
     }
 
     private void startSignOut() {
         mAuth.signOut();
-        updateUI(null);
+        startActivity(new Intent(Profile.this, start.class));
     }
 
-    private void updateUI(FirebaseUser currentUser) {
-        if (currentUser == null)
-            startActivity(new Intent(Profile.this, start.class));
-        else
-            Toast.makeText(Profile.this, "Allready Signed In\n Please Sign Out", Toast.LENGTH_LONG).show();
-    }
 }

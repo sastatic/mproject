@@ -1,0 +1,15 @@
+<vector android:height="24dp" android:viewportHeight="1300"
+    android:viewportWidth="1952" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#fff" android:name="shape" android:pathData="m122 328h200.2c1.1 0 2 0.9 2 2v200.2c0 1.1 -0.9 2 -2 2h-200.2c-1.1 0 -2 -0.9 -2 -2v-200.2c0 -1.1 0.9 -2 2 -2z"/>
+    <path android:fillColor="#fff" android:name="shape" android:pathData="m406 328h200.2c1.1 0 2 0.9 2 2v200.2c0 1.1 -0.9 2 -2 2h-200.2c-1.1 0 -2 -0.9 -2 -2v-200.2c0 -1.1 0.9 -2 2 -2z"/>
+    <path android:fillColor="#fff" android:name="shape" android:pathData="m690 328h200.2c1.1 0 2 0.9 2 2v200.2c0 1.1 -0.9 2 -2 2h-200.2c-1.1 0 -2 -0.9 -2 -2v-200.2c0 -1.1 0.9 -2 2 -2z"/>
+    <path android:fillColor="#fff" android:name="shape" android:pathData="m974 328h200.2c1.1 0 2 0.9 2 2v200.2c0 1.1 -0.9 2 -2 2h-200.2c-1.1 0 -2 -0.9 -2 -2v-200.2c0 -1.1 0.9 -2 2 -2z"/>
+    <path android:fillColor="#fff" android:name="shape" android:pathData="m1258 328h200.2c1.1 0 2 0.9 2 2v200.2c0 1.1 -0.9 2 -2 2h-200.2c-1.1 0 -2 -0.9 -2 -2v-200.2c0 -1.1 0.9 -2 2 -2z"/>
+    <path android:fillColor="#fff" android:name="shape" android:pathData="m1542 328h200.2c1.1 0 2 0.9 2 2v200.2c0 1.1 -0.9 2 -2 2h-200.2c-1.1 0 -2 -0.9 -2 -2v-200.2c0 -1.1 0.9 -2 2 -2z"/>
+    <path android:fillColor="#fff" android:name="shape" android:pathData="m122 681h200.2c1.1 0 2 0.9 2 2v200.2c0 1.1 -0.9 2 -2 2h-200.2c-1.1 0 -2 -0.9 -2 -2v-200.2c0 -1.1 0.9 -2 2 -2z"/>
+    <path android:fillColor="#fff" android:name="shape" android:pathData="m406 681h200.2c1.1 0 2 0.9 2 2v200.2c0 1.1 -0.9 2 -2 2h-200.2c-1.1 0 -2 -0.9 -2 -2v-200.2c0 -1.1 0.9 -2 2 -2z"/>
+    <path android:fillColor="#fff" android:name="shape" android:pathData="m690 681h200.2c1.1 0 2 0.9 2 2v200.2c0 1.1 -0.9 2 -2 2h-200.2c-1.1 0 -2 -0.9 -2 -2v-200.2c0 -1.1 0.9 -2 2 -2z"/>
+    <path android:fillColor="#fff" android:name="shape" android:pathData="m974 681h200.2c1.1 0 2 0.9 2 2v200.2c0 1.1 -0.9 2 -2 2h-200.2c-1.1 0 -2 -0.9 -2 -2v-200.2c0 -1.1 0.9 -2 2 -2z"/>
+    <path android:fillColor="#4285f4" android:name="Rectangle 1" android:pathData="m0 0h1952v240h-1952v-240z"/>
+    <path android:fillColor="#fff" android:name="footer" android:pathData="m0 1180h1952v120h-1952v-120z"/>
+</vector>

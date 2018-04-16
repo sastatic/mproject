@@ -37,6 +37,23 @@ public class start extends BaseActivity implements View.OnClickListener {
         mAuth = FirebaseAuth.getInstance();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null)
+            startActivity(new Intent(start.this, Profile.class));
+    }
+
+    @Override
+    public void onClick(View v) {
+        int i = v.getId();
+        if (i == R.id.signIn) {
+            startSignIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
+        }
+    }
+
+
     private void startSignIn(String email, String password) {
 
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
@@ -46,34 +63,11 @@ public class start extends BaseActivity implements View.OnClickListener {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (!task.isSuccessful())
-                        Toast.makeText(start.this, "Sign In Problem", Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(start.this, signup_form.class));
                     else
-                        updateUI(mAuth.getCurrentUser());
+                        startActivity(new Intent(start.this, Profile.class));
                 }
             });
-        }
-    }
-
-    private void updateUI(FirebaseUser currentUser) {
-        if (currentUser != null)
-            startActivity(new Intent(start.this, Profile.class));
-        else
-            Toast.makeText(start.this, "Some error occured\n Please Sign In", Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI (currentUser);
-    }
-
-    @Override
-    public void onClick(View v) {
-        int i = v.getId();
-        if (i == R.id.signIn) {
-            startSignIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
         }
     }
 }
