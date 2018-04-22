@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="EMAIL..."
+            android:hint="  EMAIL..."
             android:inputType="textEmailAddress" />
 
         <EditText
@@ -32,14 +32,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="PASSWORD..."
-            android:inputType="textPassword" />
+            android:hint="  PASSWORD..."
+            android:inputType="numberPassword"/>
 
         <Button
             android:id="@+id/signIn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Register or LOG IN" />
+            android:text="LOG IN" />
+
+        <Button
+            android:id="@+id/registerBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Register" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

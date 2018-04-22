@@ -1,13 +1,10 @@
 package randevu.mproject;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -33,6 +30,7 @@ public class start extends BaseActivity implements View.OnClickListener {
         mPasswordField = findViewById(R.id.password);
 
         findViewById(R.id.signIn).setOnClickListener(this);
+        findViewById(R.id.registerBtn).setOnClickListener(this);
 
         mAuth = FirebaseAuth.getInstance();
     }
@@ -41,8 +39,11 @@ public class start extends BaseActivity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null)
+        if (currentUser != null) {
             startActivity(new Intent(start.this, Profile.class));
+            finish();
+            return;
+        }
     }
 
     @Override
@@ -50,6 +51,11 @@ public class start extends BaseActivity implements View.OnClickListener {
         int i = v.getId();
         if (i == R.id.signIn) {
             startSignIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
+        }
+        else if (i == R.id.registerBtn) {
+            startActivity(new Intent(start.this, signup_form.class));
+            finish();
+            return;
         }
     }
 
@@ -63,9 +69,12 @@ public class start extends BaseActivity implements View.OnClickListener {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (!task.isSuccessful())
-                        startActivity(new Intent(start.this, signup_form.class));
-                    else
+                        Toast.makeText(start.this, "Please Register First...", Toast.LENGTH_LONG).show();
+                    else {
                         startActivity(new Intent(start.this, Profile.class));
+                        finish();
+                        return;
+                    }
                 }
             });
         }

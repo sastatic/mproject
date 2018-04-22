@@ -2,13 +2,12 @@ package randevu.mproject;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -85,6 +84,8 @@ public class signup_form extends AppCompatActivity {
                     mProgress.dismiss();
 
                     startActivity(new Intent(signup_form.this, Profile.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    finish();
+                    return;
                 }
             });
         }

@@ -1,13 +1,16 @@
 package randevu.mproject;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class Profile extends BaseActivity implements View.OnClickListener {
 
@@ -18,7 +21,7 @@ public class Profile extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.activity_profile);
 
         findViewById(R.id.signOut).setOnClickListener(this);
-        findViewById(R.id.userBtn).setOnClickListener(this);
+        findViewById(R.id.customerBtn).setOnClickListener(this);
         findViewById(R.id.delivererBtn).setOnClickListener(this);
 
         mAuth = FirebaseAuth.getInstance();
@@ -36,25 +39,31 @@ public class Profile extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.signOut) {
-            startSignOut();
-        } else if (i == R.id.userBtn) {
-            startUser();
-        } else if (i == R.id.delivererBtn) {
-            startDeliverer();
+            mAuth.signOut();
+            startActivity(new Intent(Profile.this, start.class));
+        }
+        else if (i == R.id.customerBtn) {
+            startActivity(new Intent(Profile.this, Customer.class));
+            finish();
+            return;
+        }
+        else if (i == R.id.delivererBtn) {
+            final DatabaseReference fb = FirebaseDatabase.getInstance().getReference().child("DelivererAvailable");
+            fb.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    fb.child(mAuth.getCurrentUser().getUid());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            startActivity(new Intent(Profile.this, DelivererMap.class));
+
+            finish();
+            return;
         }
     }
-
-    private void startDeliverer() {
-        startActivity(new Intent(Profile.this, Deliverer.class));
-    }
-
-    private void startUser() {
-        Toast.makeText(Profile.this, "Button to be linked", Toast.LENGTH_LONG).show();
-    }
-
-    private void startSignOut() {
-        mAuth.signOut();
-        startActivity(new Intent(Profile.this, start.class));
-    }
-
 }
