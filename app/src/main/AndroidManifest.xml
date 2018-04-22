@@ -34,10 +34,16 @@
         </activity>
         <activity android:name=".Profile" />
         <activity android:name=".signup_form" />
-        <activity android:name=".Customer" />
         <activity
             android:name=".DelivererMap"
             android:label="@string/title_activity_deliverer_map" />
+        <activity
+            android:name=".models.CustomerMap"
+            android:label="@string/title_activity_customer_map" />
+        <activity
+            android:name=".CustomerMap"
+            android:label="@string/title_activity_customer_map" />
+        <activity android:name=".Customer"></activity>
     </application>
 
 </manifest>

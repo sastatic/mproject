@@ -62,7 +62,7 @@ import codingwithmitch.com.googlemapsgoogleplaces.models.PlaceInfo;
  * Created by User on 10/2/2017.
  */
 
-public class DelivererMap extends AppCompatActivity implements OnMapReadyCallback,
+public class CustomerMap extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
     Button b;
     @Override
@@ -91,7 +91,7 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private static final String TAG = "DelivererMap";
+    private static final String TAG = "CustomerMap";
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -208,7 +208,7 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
 
                 try {
-                    startActivityForResult(builder.build(DelivererMap.this), PLACE_PICKER_REQUEST);
+                    startActivityForResult(builder.build(CustomerMap.this), PLACE_PICKER_REQUEST);
                 } catch (GooglePlayServicesRepairableException e) {
                     Log.e(TAG, "onClick: GooglePlayServicesRepairableException: " + e.getMessage() );
                 } catch (GooglePlayServicesNotAvailableException e) {
@@ -237,7 +237,7 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
 
         String searchString = mSearchText.getText().toString();
 
-        Geocoder geocoder = new Geocoder(DelivererMap.this);
+        Geocoder geocoder = new Geocoder(CustomerMap.this);
         List<Address> list = new ArrayList<>();
         try{
             list = geocoder.getFromLocationName(searchString, 1);
@@ -271,14 +271,14 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
                         if(task.isSuccessful() && task.getResult() != null) {
                             Log.d(TAG, "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
-                            startLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                            endLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                                     DEFAULT_ZOOM,
                                     "My Location");
 
                         }else{
                             Log.d(TAG, "onComplete: current location is null");
-                            Toast.makeText(DelivererMap.this, "unable to get current location", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CustomerMap.this, "unable to get current location", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -294,7 +294,7 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.clear();
 
-        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(DelivererMap.this));
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(CustomerMap.this));
 
         if(placeInfo != null){
             try{
@@ -337,7 +337,7 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
         Log.d(TAG, "initMap: initializing map");
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
-        mapFragment.getMapAsync(DelivererMap.this);
+        mapFragment.getMapAsync(CustomerMap.this);
     }
 
     private void getLocationPermission(){
@@ -458,11 +458,11 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
         }
         int i = view.getId();
         if (i == R.id.button2) {
-            Toast.makeText(DelivererMap.this, "Your Location And Your Destination Location\nIs Updated To Database.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CustomerMap.this, "Please Wait Searching For Deliverer Guy", Toast.LENGTH_SHORT).show();
 
-            endLocation = mPlace.getLatlng();
+            startLocation = mPlace.getLatlng();
 
-            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child("DelivererAvailable").child(id);
+            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child("Customer").child(id);
             DatabaseReference startLoc = dbRef.child("Start");
             DatabaseReference endLoc = dbRef.child("End");
 
