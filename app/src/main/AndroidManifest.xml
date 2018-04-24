@@ -43,7 +43,9 @@
         <activity
             android:name=".CustomerMap"
             android:label="@string/title_activity_customer_map" />
-        <activity android:name=".Customer"></activity>
+        <activity android:name=".Customer" />
+        <activity android:name=".DelivererWait" />
+        <activity android:name=".CustomerWait"></activity>
     </application>
 
 </manifest>

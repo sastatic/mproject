@@ -24,6 +24,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -49,11 +53,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import codingwithmitch.com.googlemapsgoogleplaces.models.PlaceInfo;
@@ -64,7 +70,44 @@ import codingwithmitch.com.googlemapsgoogleplaces.models.PlaceInfo;
 
 public class CustomerMap extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
-    Button b;
+
+    private static final String TAG = "CustomerMap";
+    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
+    private String uid;
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    private static final float DEFAULT_ZOOM = 15f;
+    private static final int PLACE_PICKER_REQUEST = 1;
+
+    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -168), new LatLng(71, 136));
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
+    private DatabaseReference startLoc, endLoc;
+
+    //widgets
+    private AutoCompleteTextView mSearchText;
+    private ImageView mGps, mInfo, mPlacePicker;
+
+    //vars
+    private Boolean mLocationPermissionsGranted = false;
+    private GoogleMap mMap;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
+    private GoogleApiClient mGoogleApiClient;
+    private PlaceInfo mPlace;
+    private Marker mMarker;
+
+    private LatLng startLocation, endLocation;
+
+    private double radius = 0.2;
+    private Boolean delivererFound = false;
+    private String delivererFoundId;
+
+    private Button mRequest;
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
@@ -90,33 +133,6 @@ public class CustomerMap extends AppCompatActivity implements OnMapReadyCallback
             init();
         }
     }
-
-    private static final String TAG = "CustomerMap";
-
-    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
-    private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-    private static final float DEFAULT_ZOOM = 15f;
-    private static final int PLACE_PICKER_REQUEST = 1;
-    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -168), new LatLng(71, 136));
-
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    //widgets
-    private AutoCompleteTextView mSearchText;
-    private ImageView mGps, mInfo, mPlacePicker;
-
-    //vars
-    private Boolean mLocationPermissionsGranted = false;
-    private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
-    private GoogleApiClient mGoogleApiClient;
-    private PlaceInfo mPlace;
-    private Marker mMarker;
-
-    private LatLng startLocation, endLocation;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,6 +141,7 @@ public class CustomerMap extends AppCompatActivity implements OnMapReadyCallback
         mGps = (ImageView) findViewById(R.id.ic_gps);
         mInfo = (ImageView) findViewById(R.id.place_info);
         mPlacePicker = (ImageView) findViewById(R.id.place_picker);
+        mRequest = (Button) findViewById(R.id.button2);
         findViewById(R.id.button2).setOnClickListener(this);
         getLocationPermission();
 
@@ -141,6 +158,7 @@ public class CustomerMap extends AppCompatActivity implements OnMapReadyCallback
                 }
             }
         };
+        uid = mAuth.getCurrentUser().getUid().toString();
     }
 
     private void init(){
@@ -448,30 +466,73 @@ public class CustomerMap extends AppCompatActivity implements OnMapReadyCallback
         }
     };
 
+    DatabaseReference deliverer;
     @Override
     public void onClick(View view) {
-        String id = "";
-        try {
-            id = mAuth.getCurrentUser().getUid().toString();
-        } catch (NullPointerException e){
-            e.printStackTrace();
-        }
         int i = view.getId();
         if (i == R.id.button2) {
             Toast.makeText(CustomerMap.this, "Please Wait Searching For Deliverer Guy", Toast.LENGTH_SHORT).show();
 
             startLocation = mPlace.getLatlng();
 
-            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child("Customer").child(id);
-            DatabaseReference startLoc = dbRef.child("Start");
-            DatabaseReference endLoc = dbRef.child("End");
+            startLoc = FirebaseDatabase.getInstance().getReference().child("StartCustomer");
+            endLoc = FirebaseDatabase.getInstance().getReference().child("EndCustomer");
 
-            startLoc.child("latitude").setValue(startLocation.latitude);
-            startLoc.child("longitude").setValue(startLocation.longitude);
+            GeoFire geoFire1 = new GeoFire(startLoc);
+            geoFire1.setLocation(uid, new GeoLocation(startLocation.latitude, startLocation.longitude));
 
-            endLoc.child("latitude").setValue(endLocation.latitude);
-            endLoc.child("longitude").setValue(endLocation.longitude);
+            GeoFire geoFire2 = new GeoFire(endLoc);
+            geoFire2.setLocation(uid, new GeoLocation(endLocation.latitude, endLocation.longitude));
+
+            Toast.makeText(CustomerMap.this, "Wait for deliverer to be found.", Toast.LENGTH_SHORT).show();
+            getClosestDeliverer();
+
+            Intent mIntent = new Intent(this, CustomerWait.class);
+            mIntent.putExtra("delivererFoundId", delivererFoundId);
+            startActivity(mIntent);
         }
+    }
+
+    private void getClosestDeliverer() {
+        DatabaseReference endDel = FirebaseDatabase.getInstance().getReference().child("EndDeliverer");
+        DatabaseReference startDel = FirebaseDatabase.getInstance().getReference().child("StartDeliverer");
+
+        GeoFire geoFire = new GeoFire(startDel);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(endLocation.latitude, endLocation.longitude), radius);
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                if (!delivererFound) {
+                    delivererFound = true;
+                    delivererFoundId = key;
+
+                    deliverer = FirebaseDatabase.getInstance().getReference().child("Users").child(delivererFoundId);
+                    HashMap map = new HashMap();
+                    map.put("CustomerItemRequestId", uid);
+                    deliverer.updateChildren(map);
+                }
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                if (!delivererFound) {
+                    radius += 0.2;
+                    getClosestDeliverer();
+                }
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+            }
+        });
     }
 }
 

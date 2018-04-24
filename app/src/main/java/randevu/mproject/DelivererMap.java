@@ -24,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -92,6 +94,7 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private static final String TAG = "DelivererMap";
+    private String uid = "";
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -102,6 +105,8 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    private DatabaseReference startLoc, endLoc;
     //widgets
     private AutoCompleteTextView mSearchText;
     private ImageView mGps, mInfo, mPlacePicker;
@@ -116,6 +121,7 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
     private Marker mMarker;
 
     private LatLng startLocation, endLocation;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -141,7 +147,10 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         };
+        uid = mAuth.getCurrentUser().getUid().toString();
     }
+
+
 
     private void init(){
         Log.d(TAG, "init: initializing");
@@ -450,27 +459,20 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onClick(View view) {
-        String id = "";
-        try {
-            id = mAuth.getCurrentUser().getUid().toString();
-        } catch (NullPointerException e){
-            e.printStackTrace();
-        }
         int i = view.getId();
         if (i == R.id.button2) {
             Toast.makeText(DelivererMap.this, "Your Location And Your Destination Location\nIs Updated To Database.", Toast.LENGTH_SHORT).show();
 
             endLocation = mPlace.getLatlng();
 
-            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child("DelivererAvailable").child(id);
-            DatabaseReference startLoc = dbRef.child("Start");
-            DatabaseReference endLoc = dbRef.child("End");
+            startLoc = FirebaseDatabase.getInstance().getReference().child("StartDeliverer");
+            endLoc = FirebaseDatabase.getInstance().getReference().child("EndDeliverer");
 
-            startLoc.child("latitude").setValue(startLocation.latitude);
-            startLoc.child("longitude").setValue(startLocation.longitude);
+            GeoFire geoFire1 = new GeoFire(startLoc);
+            geoFire1.setLocation(uid, new GeoLocation(startLocation.latitude, startLocation.longitude));
 
-            endLoc.child("latitude").setValue(endLocation.latitude);
-            endLoc.child("longitude").setValue(endLocation.longitude);
+            GeoFire geoFire2 = new GeoFire(endLoc);
+            geoFire2.setLocation(uid, new GeoLocation(endLocation.latitude, endLocation.longitude));
         }
     }
 }

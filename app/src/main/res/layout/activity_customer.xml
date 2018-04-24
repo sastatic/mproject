@@ -26,11 +26,19 @@
             android:inputType="textPersonName" />
 
         <EditText
+            android:id="@+id/priceField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="  Price of item"
+            android:inputType="number" />
+
+        <EditText
             android:id="@+id/itemDescriptionField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Please Give Item Description."
+            android:hint="  Please Give Item\n  Description."
             android:inputType="textMultiLine"
             android:lines="5" />
 
