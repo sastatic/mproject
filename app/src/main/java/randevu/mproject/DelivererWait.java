@@ -83,9 +83,9 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
 
 //                    while (cid == null)
                         cidGetter("/Users/"+uid+"/MatchedCustomer");
-//                    while (cItemOTP == null)
+//                    while (cItemOTP == 0)
                         cItemOTPGetter("/Users/"+uid+"/itemOTP");
-//                    while (cItemPrice == null)
+//                    while (cItemPrice == 0)
                         cItemPriceGetter("/Users/"+cid+"/Item/Price");
 //                    while (cName == null)
                         cNameGetter("/Users/"+cid+"Name");
