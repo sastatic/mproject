@@ -2,12 +2,20 @@ package randevu.mproject;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 public class CustomerWait extends BaseActivity {
 
@@ -16,12 +24,14 @@ public class CustomerWait extends BaseActivity {
     private String uid = "";
     private String delivererFoundId = "";
 
-    private TextView mTextField;
+    private ListView mDetailList;
+
+    private ArrayList<String> deliverer;
+
+    private Button mSignOut, mAccept, mReject;
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-
-    private LatLng delivererLatLng;
 
     private GoogleMap mMap;
 
@@ -31,8 +41,7 @@ public class CustomerWait extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_wait);
 
-        mTextField = findViewById(R.id.tfCWait);
-        mTextField = (TextView) findViewById(R.id.tfCWait);
+        mDetailList = (ListView) findViewById(R.id.detailList);
 
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
@@ -40,25 +49,31 @@ public class CustomerWait extends BaseActivity {
 
         Intent myIntent = getIntent();
         delivererFoundId = myIntent.getStringExtra("delivererFoundId");
-        mTextField.setText(delivererFoundId);
-//        getDelivererLocation();
-    }
-    /*
-    private void getDelivererLocation () {
-        DatabaseReference delivererLocationRef = FirebaseDatabase.getInstance().getReference().child("StartDeliverer").child(delivererFoundId).child("l");
-        delivererLocationRef.addValueEventListener(new ValueEventListener() {
+        DatabaseReference delivererRef = FirebaseDatabase.getInstance().getReference().child("Users").child(delivererFoundId);
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, deliverer);
+
+        mDetailList.setAdapter(arrayAdapter);
+
+        delivererRef.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    List<Object > map = (List <Object>) dataSnapshot.getValue();
-                    double locationLat = 0;
-                    double locationLng = 0;
-                    if(map.get(0) != null)
-                        locationLat = Double.parseDouble(map.get(0).toString());
-                    if(map.get(1) != null)
-                        locationLng = Double.parseDouble(map.get(1).toString());
-                    delivererLatLng = new LatLng(locationLat, locationLng);
-                }
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
             }
 
             @Override
@@ -67,5 +82,4 @@ public class CustomerWait extends BaseActivity {
             }
         });
     }
-    */
 }

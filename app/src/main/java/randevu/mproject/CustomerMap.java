@@ -104,7 +104,7 @@ public class CustomerMap extends AppCompatActivity implements OnMapReadyCallback
 
     private double radius = 0.2;
     private Boolean delivererFound = false;
-    private String delivererFoundId;
+    private String delivererFoundId="";
 
     private Button mRequest;
 
@@ -486,10 +486,6 @@ public class CustomerMap extends AppCompatActivity implements OnMapReadyCallback
 
             Toast.makeText(CustomerMap.this, "Wait for deliverer to be found.", Toast.LENGTH_SHORT).show();
             getClosestDeliverer();
-
-            Intent mIntent = new Intent(this, CustomerWait.class);
-            mIntent.putExtra("delivererFoundId", delivererFoundId);
-            startActivity(mIntent);
         }
     }
 
@@ -510,6 +506,10 @@ public class CustomerMap extends AppCompatActivity implements OnMapReadyCallback
                     HashMap map = new HashMap();
                     map.put("CustomerItemRequestId", uid);
                     deliverer.updateChildren(map);
+
+                    Intent mIntent = new Intent(CustomerMap.this, CustomerWait.class);
+                    mIntent.putExtra("delivererFoundId", delivererFoundId);
+                    startActivity(mIntent);
                 }
             }
 
