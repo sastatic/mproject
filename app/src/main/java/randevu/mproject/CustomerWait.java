@@ -81,8 +81,8 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
         customerRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String money = dataSnapshot.getValue(String.class);
-                mCustDet.setText("Your Current Wallet ballence is " + money + " ₹.\nAfter Accepting " + price + " ₹ will be deduced as Item cost and service charge");
+                Integer money = dataSnapshot.getValue(Integer.class);
+                mCustDet.setText("Your Current Wallet ballence is " + Integer.toString(money) + " ₹.\nAfter Accepting " + price + " ₹ will be deduced as Item cost and service charge");
             }
 
             @Override
@@ -100,14 +100,14 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
         int i = view.getId();
         if (i == R.id.acceptBtn) {
             Toast.makeText(CustomerWait.this, "Accepted...", Toast.LENGTH_LONG).show();
-            delivererRef.child("Matched").setValue("true");
+            delivererRef.child("Matched").setValue(1);
             delivererRef.child("MatchedCustomer").setValue(uid);
-             int min = 0;
-             int max = 100000;
-             int random = new Random().nextInt((max - min) + 1) + min;
-             TextView tv = findViewById(R.id.random);
-             tv.setText("OTP :-" + random);
-            delivererRef.child("OTP").setValue(random);
+            int min = 0;
+            int max = 100000;
+            int random = new Random().nextInt((max - min) + 1) + min;
+            TextView tv = findViewById(R.id.random);
+            tv.setText("Give this OTP to Deliverer After Complition of Delivery\n" + random);
+            delivererRef.child("itemOTP").setValue(random);
 
         }
         if (i == R.id.rejectBtn) {

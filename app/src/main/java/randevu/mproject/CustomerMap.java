@@ -59,7 +59,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import codingwithmitch.com.googlemapsgoogleplaces.models.PlaceInfo;
@@ -505,11 +504,6 @@ public class CustomerMap extends AppCompatActivity implements OnMapReadyCallback
                 if (!delivererFound) {
                     delivererFound = true;
                     delivererFoundId = key;
-
-                    deliverer = FirebaseDatabase.getInstance().getReference().child("Users").child(delivererFoundId);
-                    HashMap map = new HashMap();
-                    map.put("CustomerItemRequestId", uid);
-                    deliverer.updateChildren(map);
 
                     Intent mIntent = new Intent(CustomerMap.this, CustomerWait.class);
                     mIntent.putExtra("delivererFoundId", delivererFoundId);

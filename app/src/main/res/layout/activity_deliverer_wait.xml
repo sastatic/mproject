@@ -6,6 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".DelivererWait">
 
+    <Button
+        android:id="@+id/refreshBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="refresh"
+        app:layout_constraintTop_toTopOf="parent"  />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,6 +24,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginBottom="50dp">
 
+
         <TextView
             android:id="@+id/custField"
             android:gravity="center"
@@ -23,54 +32,51 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:textSize="10dp"/>
+            android:textSize="15dp"/>
 
         <TextView
+            android:id="@+id/introField"
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:text="Your Deliverer Details"
-            android:gravity="center"
             android:textSize="30dp"/>
 
         <TextView
-            android:id="@+id/nameField"
+            android:id="@+id/itemField"
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:textSize="20dp"/>
+            android:textSize="23dp"/>
 
         <TextView
-            android:id="@+id/phoneField"
+            android:id="@+id/itemDescriptionField"
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:textSize="20dp"/>
+            android:textSize="17dp"
+            tools:ignore="DuplicateIds" />
 
-        <LinearLayout
+
+        <EditText
+            android:id="@+id/otpField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:ems="10"
+            android:inputType="numberPassword" />
 
-            <Button
-                android:id="@+id/acceptBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Accept" />
+        <Button
+            android:id="@+id/acceptBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="accept" />
 
-            <Button
-                android:id="@+id/rejectBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="reject" />
-        </LinearLayout>
     </LinearLayout>
 
     <Button

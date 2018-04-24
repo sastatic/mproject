@@ -45,9 +45,10 @@ public class Customer extends AppCompatActivity implements View.OnClickListener 
 
         int i = view.getId();
         if (i == R.id.itemSubmitBtn) {
-            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child("Item").child(uid);
-            dbRef.child(item).child("Description").setValue(description);
-            dbRef.child(item).child("Price").setValue(Integer.toString(price));
+            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Item");
+            dbRef.child("ItemName").setValue(item);
+            dbRef.child("Description").setValue(description);
+            dbRef.child("Price").setValue(price);
 
             Intent mIntent = new Intent(Customer.this, CustomerMap.class);
             mIntent.putExtra("price", Integer.toString(price));
