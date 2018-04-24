@@ -473,6 +473,10 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
 
             GeoFire geoFire2 = new GeoFire(endLoc);
             geoFire2.setLocation(uid, new GeoLocation(endLocation.latitude, endLocation.longitude));
+
+            startActivity(new Intent(this, DelivererWait.class));
+            finish();
+            return;
         }
     }
 }
