@@ -15,6 +15,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Random;
+
 public class CustomerWait extends BaseActivity implements View.OnClickListener {
 
     private String customerId = "";
@@ -100,6 +102,13 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
             Toast.makeText(CustomerWait.this, "Accepted...", Toast.LENGTH_LONG).show();
             delivererRef.child("Matched").setValue("true");
             delivererRef.child("MatchedCustomer").setValue(uid);
+             int min = 0;
+             int max = 100000;
+             int random = new Random().nextInt((max - min) + 1) + min;
+             TextView tv = findViewById(R.id.random);
+             tv.setText("OTP :-" + random);
+            delivererRef.child("OTP").setValue(random);
+
         }
         if (i == R.id.rejectBtn) {
             Toast.makeText(CustomerWait.this, "Rejected...", Toast.LENGTH_LONG).show();

@@ -72,6 +72,15 @@
                 android:layout_weight="1"
                 android:text="reject" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/random"
+            android:layout_width="match_parent"
+            android:layout_height="61dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:textSize="10dp" />
     </LinearLayout>
 
     <Button
