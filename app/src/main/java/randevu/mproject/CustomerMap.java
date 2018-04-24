@@ -107,6 +107,7 @@ public class CustomerMap extends AppCompatActivity implements OnMapReadyCallback
     private String delivererFoundId="";
 
     private Button mRequest;
+    private String price;
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -144,6 +145,9 @@ public class CustomerMap extends AppCompatActivity implements OnMapReadyCallback
         mRequest = (Button) findViewById(R.id.button2);
         findViewById(R.id.button2).setOnClickListener(this);
         getLocationPermission();
+
+        Intent myIntent = getIntent();
+        price = myIntent.getStringExtra("price");
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -509,6 +513,7 @@ public class CustomerMap extends AppCompatActivity implements OnMapReadyCallback
 
                     Intent mIntent = new Intent(CustomerMap.this, CustomerWait.class);
                     mIntent.putExtra("delivererFoundId", delivererFoundId);
+                    mIntent.putExtra("price", price);
                     startActivity(mIntent);
                 }
             }
