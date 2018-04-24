@@ -120,7 +120,7 @@ public class DelivererMap extends AppCompatActivity implements OnMapReadyCallbac
     private PlaceInfo mPlace;
     private Marker mMarker;
 
-    private LatLng startLocation, endLocation;ā
+    private LatLng startLocation, endLocation;
 
 
     @Override
