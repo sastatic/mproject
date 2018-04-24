@@ -81,6 +81,7 @@ public class signup_form extends AppCompatActivity {
                     curr_user_db.child("Email").setValue(email);
                     curr_user_db.child("Password").setValue(password);
                     curr_user_db.child("Wallet").setValue("5000");
+                    curr_user_db.child("Matched").setValue("false");
 
                     mProgress.dismiss();
 

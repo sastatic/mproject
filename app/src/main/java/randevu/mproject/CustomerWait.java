@@ -28,6 +28,7 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
     private FirebaseUser currentUser;
 
     private GoogleMap mMap;
+    private DatabaseReference delivererRef;
 
 
     @Override
@@ -49,7 +50,7 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
         delivererFoundId = myIntent.getStringExtra("delivererFoundId");
         price = myIntent.getStringExtra("price");
 
-        DatabaseReference delivererRef = FirebaseDatabase.getInstance().getReference().child("Users").child(delivererFoundId);
+        delivererRef = FirebaseDatabase.getInstance().getReference().child("Users").child(delivererFoundId);
 
         DatabaseReference mNameRef = delivererRef.child("Name");
         mNameRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -97,6 +98,8 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
         int i = view.getId();
         if (i == R.id.acceptBtn) {
             Toast.makeText(CustomerWait.this, "Accepted...", Toast.LENGTH_LONG).show();
+            delivererRef.child("Matched").setValue("true");
+            delivererRef.child("MatchedCustomer").setValue(uid);
         }
         if (i == R.id.rejectBtn) {
             Toast.makeText(CustomerWait.this, "Rejected...", Toast.LENGTH_LONG).show();
