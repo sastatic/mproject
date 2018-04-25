@@ -36,6 +36,7 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
     private Integer cm=0;
     private Integer cItemOTP=0;
     private Integer cItemPrice=0;
+    private Integer myMoney=0;
 
     private String cid="";
     private String cName="";
@@ -45,7 +46,7 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
 
     private EditText mOTP;
 
-    private TextView mCustField, mItemField, mIntroField, mDescrField;
+    private TextView mCustField, mItemField, mIntroField, mDescrField, mMyWalletField;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -58,13 +59,16 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
 
         mAcceptBtn = (Button) findViewById(R.id.acceptBtn);
         mAcceptBtn.setVisibility(View.INVISIBLE);
+        mOTP = findViewById(R.id.otpField);
+        mOTP.setVisibility(View.INVISIBLE);
 
         mCustField = (TextView) findViewById(R.id.custField);
         mItemField = (TextView) findViewById(R.id.itemField);
         mIntroField = (TextView) findViewById(R.id.introField);
         mDescrField = (TextView) findViewById(R.id.itemDescriptionField);
+        mMyWalletField = (TextView) findViewById(R.id.myWalletField);
 
-        mOTP = findViewById(R.id.otpField);
+        myMoneyGetter("/Users/"+uid+"/Wallet");
 
         uid = currentUser.getUid().toString();
         findViewById(R.id.refreshBtn).setOnClickListener(this);
@@ -78,40 +82,51 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
         if (i == R.id.refreshBtn) {
             if (cm == 0) {
                 cmGetter("/Users/"+uid+"/Matched");
-                if (cm == 1) {
-                    mAcceptBtn.setVisibility(View.VISIBLE);
+            } else {
+                mAcceptBtn.setVisibility(View.VISIBLE);
+                mOTP.setVisibility(View.VISIBLE);
 
-//                    while (cid == null)
-                        cidGetter("/Users/"+uid+"/MatchedCustomer");
-//                    while (cItemOTP == 0)
-                        cItemOTPGetter("/Users/"+uid+"/itemOTP");
-//                    while (cItemPrice == 0)
-                        cItemPriceGetter("/Users/"+cid+"/Item/Price");
-//                    while (cName == null)
-                        cNameGetter("/Users/"+cid+"Name");
-//                    while (cPhone == null)
-                        cPhoneGetter("/Users/"+cid+"/Phone");
-//                    while (cItem == null)
-                        cItemGetter("/Users/"+cid+"/Item/ItemName");
-//                    while (cItemDescription == null)
-                        cItemDescriptionGetter("/Users/"+cid+"/Item/Description");
+                if (cid == null || cid == "")
+                    cidGetter("/Users/"+uid+"/MatchedCustomer");
+                if (cItemOTP == null || cItemOTP == 0)
+                    cItemOTPGetter("/Users/"+uid+"/itemOTP");
+                if (cItemPrice == null || cItemPrice == 0)
+                    cItemPriceGetter("/Users/"+cid+"/Item/Price");
+                if (cName == null || cName == "")
+                    cNameGetter("/Users/"+cid+"Name");
+                if (cPhone == null || cPhone == "")
+                    cPhoneGetter("/Users/"+cid+"/Phone");
+                if (cItem == null || cItem == "")
+                    cItemGetter("/Users/"+cid+"/Item/ItemName");
+                if (cItemDescription == null || cItemDescription == "")
+                    cItemDescriptionGetter("/Users/"+cid+"/Item/Description");
 
-                    String strC = "Customer Name: "+cName+"\nCustomer Phone No. "+cPhone;
-                    String strI = "Item Name: "+cItem+"\nItem Price: "+cItemPrice;
-                    String strDI = "Item Description\n"+cItemDescription;
+                String strC = "Customer Name: "+cName+"\nCustomer Phone No. "+cPhone;
+                String strI = "Item Name: "+cItem+"\nItem Price: "+cItemPrice;
+                String strDI = "Item Description\n"+cItemDescription;
 
-                    mCustField.setText(strC);
-                    mItemField.setText(strI);
-                    mIntroField.setText("Item Details");
-                    mDescrField.setText(strDI);
-                }
+                mCustField.setText(strC);
+                mItemField.setText(strI);
+                mIntroField.setText("Item Details");
+                mDescrField.setText(strDI);
             }
         }
         if (i == R.id.acceptBtn) {
-            Toast.makeText(DelivererWait.this, "Accepted...", Toast.LENGTH_LONG).show();
-//            startActivity(new Intent(this, Profile.class));
-//            finish();
-//            return;
+            int otp = Integer.parseInt(mOTP.getText().toString().trim());
+            if (cItemOTP == otp)
+                while (myMoney == null || myMoney == 0)
+                    myMoneyGetter("/Users/"+uid+"Wallet");
+                FirebaseDatabase.getInstance().getReference("/Users/"+uid+"/Wallet").setValue(myMoney + cItemPrice);
+                FirebaseDatabase.getInstance().getReference("/Users/"+uid+"/Matched").setValue(0);
+                FirebaseDatabase.getInstance().getReference("/Users/"+uid+"/MatchedCustomer").removeValue();
+                FirebaseDatabase.getInstance().getReference("/Users/"+uid+"/itemOTP").removeValue();
+
+                FirebaseDatabase.getInstance().getReference("/Users/"+cid+"/Item").removeValue();
+
+                mAcceptBtn.setVisibility(View.INVISIBLE);
+                mOTP.setVisibility(View.INVISIBLE);
+
+                mMyWalletField.setText("Your Wallet Amount updated to Rs. "+Integer.toString(myMoney));
         }
         if (i == R.id.signOut) {
             mAuth.signOut();
@@ -125,7 +140,7 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
     private void cItemGetter(String ref) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(ref);
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot dataSnapshot) { cItem = dataSnapshot.getValue(String.class); }
+            @Override public void onDataChange(DataSnapshot dataSnapshot) { if (dataSnapshot.exists()) cItem = dataSnapshot.getValue(String.class); }
             @Override public void onCancelled(DatabaseError databaseError) {}
         });
     }
@@ -133,7 +148,7 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
     private void cPhoneGetter(String ref) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(ref);
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot dataSnapshot) { cPhone = dataSnapshot.getValue(String.class); }
+            @Override public void onDataChange(DataSnapshot dataSnapshot) { if (dataSnapshot.exists()) cPhone = dataSnapshot.getValue(String.class); }
             @Override public void onCancelled(DatabaseError databaseError) {}
         });
     }
@@ -141,7 +156,7 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
     private void cNameGetter(String ref) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(ref);
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot dataSnapshot) { cName = dataSnapshot.getValue(String.class); }
+            @Override public void onDataChange(DataSnapshot dataSnapshot) { if (dataSnapshot.exists()) cName = dataSnapshot.getValue(String.class); }
             @Override public void onCancelled(DatabaseError databaseError) {}
         });
     }
@@ -149,7 +164,15 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
     private void cItemPriceGetter(String ref) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(ref);
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot dataSnapshot) { cItemPrice = dataSnapshot.getValue(Integer.class); }
+            @Override public void onDataChange(DataSnapshot dataSnapshot) { if (dataSnapshot.exists()) cItemPrice = dataSnapshot.getValue(Integer.class); }
+            @Override public void onCancelled(DatabaseError databaseError) {}
+        });
+    }
+
+    private void myMoneyGetter(String ref) {
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(ref);
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override public void onDataChange(DataSnapshot dataSnapshot) { if (dataSnapshot.exists()) myMoney = dataSnapshot.getValue(Integer.class); }
             @Override public void onCancelled(DatabaseError databaseError) {}
         });
     }
@@ -157,7 +180,7 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
     private void cItemOTPGetter(String ref) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(ref);
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot dataSnapshot) { cItemOTP = dataSnapshot.getValue(Integer.class); }
+            @Override public void onDataChange(DataSnapshot dataSnapshot) { if (dataSnapshot.exists()) cItemOTP = dataSnapshot.getValue(Integer.class); }
             @Override public void onCancelled(DatabaseError databaseError) {}
         });
     }
@@ -165,7 +188,7 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
     private void cidGetter(String ref) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(ref);
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot dataSnapshot) { cid = dataSnapshot.getValue(String.class); }
+            @Override public void onDataChange(DataSnapshot dataSnapshot) { if (dataSnapshot.exists()) cid = dataSnapshot.getValue(String.class); }
             @Override public void onCancelled(DatabaseError databaseError) {}
         });
     }
@@ -173,14 +196,14 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
     private void cItemDescriptionGetter(String ref) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(ref);
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot dataSnapshot) { cItemDescription = dataSnapshot.getValue(String.class); }
+            @Override public void onDataChange(DataSnapshot dataSnapshot) { if (dataSnapshot.exists()) cItemDescription = dataSnapshot.getValue(String.class); }
             @Override public void onCancelled(DatabaseError databaseError) {}
         });
     }
     private void cmGetter (String ref) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference(ref);
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot dataSnapshot) { cm = dataSnapshot.getValue(Integer.class); }
+            @Override public void onDataChange(DataSnapshot dataSnapshot) { if (dataSnapshot.exists()) cm = dataSnapshot.getValue(Integer.class); }
             @Override public void onCancelled(DatabaseError databaseError) { }
         });
     }

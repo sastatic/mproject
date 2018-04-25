@@ -3,6 +3,7 @@ package randevu.mproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
     private String uid = "";
     private String delivererFoundId = "";
     private String price="";
+    Integer money = 0;
 
     private TextView mName, mPhone, mCustDet;
 
@@ -31,6 +33,8 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
 
     private GoogleMap mMap;
     private DatabaseReference delivererRef;
+
+    private Button mReject;
 
 
     @Override
@@ -45,8 +49,6 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         uid = currentUser.getUid().toString();
-
-
 
         Intent myIntent = getIntent();
         delivererFoundId = myIntent.getStringExtra("delivererFoundId");
@@ -81,7 +83,7 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
         customerRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Integer money = dataSnapshot.getValue(Integer.class);
+                money = dataSnapshot.getValue(Integer.class);
                 mCustDet.setText("Your Current Wallet ballence is " + Integer.toString(money) + " ₹.\nAfter Accepting " + price + " ₹ will be deduced as Item cost and service charge");
             }
 
@@ -93,6 +95,8 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.acceptBtn).setOnClickListener(this);
         findViewById(R.id.rejectBtn).setOnClickListener(this);
         findViewById(R.id.signOut).setOnClickListener(this);
+
+        mReject = (Button) findViewById(R.id.rejectBtn);
     }
 
     @Override
@@ -104,11 +108,13 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
             delivererRef.child("MatchedCustomer").setValue(uid);
             int min = 0;
             int max = 100000;
+            FirebaseDatabase.getInstance().getReference("/Users/"+uid+"/Wallet").setValue(money-Integer.parseInt(price));
             int random = new Random().nextInt((max - min) + 1) + min;
             TextView tv = findViewById(R.id.random);
             tv.setText("Give this OTP to Deliverer After Complition of Delivery\n" + random);
             delivererRef.child("itemOTP").setValue(random);
 
+            mReject.setVisibility(View.INVISIBLE);
         }
         if (i == R.id.rejectBtn) {
             Toast.makeText(CustomerWait.this, "Rejected...", Toast.LENGTH_LONG).show();

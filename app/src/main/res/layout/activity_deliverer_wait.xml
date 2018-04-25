@@ -68,14 +68,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="numberPassword" />
+            android:gravity="center"
+            android:hint="Write OTP provided by Customer."
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:inputType="numberPassword"/>
 
         <Button
             android:id="@+id/acceptBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:layout_weight="1"
-            android:text="accept" />
+            android:text="Confirm otp" />
+
+        <TextView
+            android:id="@+id/myWalletField"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:textSize="17dp"
+            tools:ignore="DuplicateIds" />
 
     </LinearLayout>
 
