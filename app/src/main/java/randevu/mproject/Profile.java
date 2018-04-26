@@ -6,10 +6,12 @@ import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class Profile extends BaseActivity implements View.OnClickListener {
 
     private FirebaseAuth mAuth;
+    private String uid="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +28,14 @@ public class Profile extends BaseActivity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        uid = currentUser.getUid().toString().trim();
+
+        FirebaseDatabase.getInstance().getReference("StartCustomer/"+uid).removeValue();
+        FirebaseDatabase.getInstance().getReference("StartDeliverer/"+uid).removeValue();
+        FirebaseDatabase.getInstance().getReference("EndtCustomer/"+uid).removeValue();
+        FirebaseDatabase.getInstance().getReference("EndDeliverer/"+uid).removeValue();
+        FirebaseDatabase.getInstance().getReference("Users/"+uid+"/Item").removeValue();
+
         if (currentUser == null) {
             startActivity(new Intent(Profile.this, start.class));
             finish();

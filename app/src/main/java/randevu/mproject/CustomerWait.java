@@ -26,6 +26,8 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
     private String price="";
     Integer money = 0;
 
+    private Boolean accepted=false;
+
     private TextView mName, mPhone, mCustDet;
 
     private FirebaseAuth mAuth;
@@ -34,7 +36,7 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
     private GoogleMap mMap;
     private DatabaseReference delivererRef;
 
-    private Button mReject;
+    private Button mReject, mAccept;
 
 
     @Override
@@ -97,28 +99,34 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.signOut).setOnClickListener(this);
 
         mReject = (Button) findViewById(R.id.rejectBtn);
+        mAccept = (Button) findViewById(R.id.acceptBtn);
     }
 
     @Override
     public void onClick(View view) {
         int i = view.getId();
         if (i == R.id.acceptBtn) {
-            Toast.makeText(CustomerWait.this, "Accepted...", Toast.LENGTH_LONG).show();
-            delivererRef.child("Matched").setValue(1);
-            delivererRef.child("MatchedCustomer").setValue(uid);
-            int min = 0;
-            int max = 100000;
-            FirebaseDatabase.getInstance().getReference("/Users/"+uid+"/Wallet").setValue(money-Integer.parseInt(price));
-            int random = new Random().nextInt((max - min) + 1) + min;
-            TextView tv = findViewById(R.id.random);
-            tv.setText("Give this OTP to Deliverer After Complition of Delivery\n" + random);
-            delivererRef.child("itemOTP").setValue(random);
+            if (!accepted) {
+                accepted = true;
+                Toast.makeText(CustomerWait.this, "Accepted...", Toast.LENGTH_LONG).show();
+                delivererRef.child("Matched").setValue(1);
+                delivererRef.child("MatchedCustomer").setValue(uid);
+                int min = 0;
+                int max = 100000;
+                FirebaseDatabase.getInstance().getReference("/Users/" + uid + "/Wallet").setValue(money - Integer.parseInt(price));
+                int random = new Random().nextInt((max - min) + 1) + min;
+                TextView tv = findViewById(R.id.random);
+                tv.setText("Give this OTP to Deliverer After Complition of Delivery\n" + random);
+                delivererRef.child("itemOTP").setValue(random);
 
-            mReject.setVisibility(View.INVISIBLE);
+                mReject.setVisibility(View.INVISIBLE);
+                mAccept.setVisibility(View.INVISIBLE);
+            }
         }
         if (i == R.id.rejectBtn) {
             Toast.makeText(CustomerWait.this, "Rejected...", Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, Profile.class));
+            FirebaseDatabase.getInstance().getReference("StartCustomer/"+uid).removeValue();
             finish();
             return;
         }
@@ -129,5 +137,13 @@ public class CustomerWait extends BaseActivity implements View.OnClickListener {
             finish();
             return;
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        FirebaseDatabase.getInstance().getReference("EndCustomer/"+uid).removeValue();
+        FirebaseDatabase.getInstance().getReference("StartCustomer/"+uid).removeValue();
     }
 }

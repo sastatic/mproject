@@ -93,13 +93,15 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
                 if (cItemPrice == null || cItemPrice == 0)
                     cItemPriceGetter("/Users/"+cid+"/Item/Price");
                 if (cName == null || cName == "")
-                    cNameGetter("/Users/"+cid+"Name");
+                    cNameGetter("/Users/"+cid+"/Name");
                 if (cPhone == null || cPhone == "")
                     cPhoneGetter("/Users/"+cid+"/Phone");
                 if (cItem == null || cItem == "")
                     cItemGetter("/Users/"+cid+"/Item/ItemName");
                 if (cItemDescription == null || cItemDescription == "")
                     cItemDescriptionGetter("/Users/"+cid+"/Item/Description");
+                if (myMoney == null || myMoney == 0)
+                    myMoneyGetter("/Users/"+uid+"/Wallet");
 
                 String strC = "Customer Name: "+cName+"\nCustomer Phone No. "+cPhone;
                 String strI = "Item Name: "+cItem+"\nItem Price: "+cItemPrice;
@@ -109,24 +111,25 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
                 mItemField.setText(strI);
                 mIntroField.setText("Item Details");
                 mDescrField.setText(strDI);
+                mMyWalletField.setText("Your Current wallet balance is "+Integer.toString(myMoney));
             }
         }
         if (i == R.id.acceptBtn) {
             int otp = Integer.parseInt(mOTP.getText().toString().trim());
-            if (cItemOTP == otp)
-                while (myMoney == null || myMoney == 0)
-                    myMoneyGetter("/Users/"+uid+"Wallet");
-                FirebaseDatabase.getInstance().getReference("/Users/"+uid+"/Wallet").setValue(myMoney + cItemPrice);
-                FirebaseDatabase.getInstance().getReference("/Users/"+uid+"/Matched").setValue(0);
-                FirebaseDatabase.getInstance().getReference("/Users/"+uid+"/MatchedCustomer").removeValue();
-                FirebaseDatabase.getInstance().getReference("/Users/"+uid+"/itemOTP").removeValue();
+            if (cItemOTP == otp) {
+                FirebaseDatabase.getInstance().getReference("/Users/" + uid + "/Wallet").setValue(myMoney+cItemPrice);
+                FirebaseDatabase.getInstance().getReference("/Users/" + uid + "/Matched").setValue(0);
+                FirebaseDatabase.getInstance().getReference("/Users/" + uid + "/MatchedCustomer").removeValue();
+                FirebaseDatabase.getInstance().getReference("/Users/" + uid + "/itemOTP").removeValue();
 
-                FirebaseDatabase.getInstance().getReference("/Users/"+cid+"/Item").removeValue();
-
+                FirebaseDatabase.getInstance().getReference("/Users/" + cid + "/Item").removeValue();
                 mAcceptBtn.setVisibility(View.INVISIBLE);
                 mOTP.setVisibility(View.INVISIBLE);
+                mMyWalletField.setText("Your Wallet Amount updated to Rs. " + Integer.toString(myMoney+cItemPrice));
+            } else {
+                Toast.makeText(DelivererWait.this, "OTP Miss Matched", Toast.LENGTH_LONG).show();
 
-                mMyWalletField.setText("Your Wallet Amount updated to Rs. "+Integer.toString(myMoney));
+            }
         }
         if (i == R.id.signOut) {
             mAuth.signOut();
@@ -135,6 +138,13 @@ public class DelivererWait extends BaseActivity implements View.OnClickListener 
             finish();
             return;
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FirebaseDatabase.getInstance().getReference("EndDeliverer/"+uid).removeValue();
+        FirebaseDatabase.getInstance().getReference("StartDeliverer/"+uid).removeValue();
     }
 
     private void cItemGetter(String ref) {
